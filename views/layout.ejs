@@ -1,0 +1,34 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+        <script>
+            var thread_name= '<%= t_name %>';
+            $(function(){
+                var socket = io();
+                $('#send_msg').submit(function(){
+                    socket.emit('send msg', {msg: $('#typed_msg').val(), t_name: thread_name});
+                    $('#typed_msg').val('');
+                    return false;
+                });
+
+                socket.on('send msg', function(msg){
+                    $('#messages').append('<li>'+msg+'</li>' );
+                });
+
+               // socket.on('')
+            });
+        </script>
+        <ul id=messages>
+            <% table.forEach(function(i){%>
+                <li><%= i %></li>
+            <%});%>
+        </ul>
+        <form id='send_msg'>
+            <input type='text' id='typed_msg' value=''>
+            <input type='submit' value='send'>
+        </form>
+    </body>
+</html>

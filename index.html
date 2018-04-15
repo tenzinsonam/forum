@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+  </head>
+  <body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+        $(function(){
+        var socket = io();
+        socket.on('connect', function(threads){
+            console.log('socket connected');
+        });
+        
+        socket.on('update thread', function(threads){
+            //console.log(threads)
+            for (var i in threads){
+                console.log(threads[i].name);
+                $('#threads').append('<li><a href="/threads/'+threads[i].name+'">'+threads[i].name+'</a></li>');
+            }
+        }); 
+
+        $('#create_thread').submit(function(){
+            socket.emit('create_thread', $('#thread_name').val());
+            console.log($('#thread_name').val());
+            $('#thread_name').val('');
+            return false;
+        });
+        socket.on('create_thread', function(msg){
+            $('#threads').append('<li><a href="/threads/'+msg+'">'+msg+'</a></li>');
+        });
+        });
+    </script>
+    <ul id="threads"></ul>
+    <form action="" id='create_thread'>
+      <input id='thread_name' type='text' value=''>
+      <input type='submit' value='submit'>
+    </form>
+  </body>
+</html>
