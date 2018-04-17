@@ -12,6 +12,7 @@
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
     </style>
+    <link rel="stylesheet" type="text/css" href="theme.css"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   </head>
   <script>
@@ -24,6 +25,11 @@ function clickUpv(thrId){
 function viewUpv(thrId){
   let socket = io();
   socket.emit('view upvoters', thrId);
+}
+function logmeout(){
+  let username = prompt("Username");
+  let socket = io();
+  socket.emit('log out', username);
 }
 </script>
   <body>
@@ -68,10 +74,12 @@ function viewUpv(thrId){
             });
         });
     </script>
+    <button type="button" class="btn btn-danger onclick=logmeout();">LogOut</button>
     <ul id="threads"></ul>
     <form action="" id='create_thread'>
-      <input id='thread_name' type='text' value=''>
-      <input type='submit' value='submit'>
+      <input id='thread_name' type='text' value='' autocomplete="off">
+      <!--<input type='submit' value='submit'>-->
+      <button type='submit' value='submit'>Send</button>
     </form>
   </body>
 </html>

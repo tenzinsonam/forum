@@ -117,6 +117,12 @@ io.on('connection', function(socket){
         });
     });
 
+    socket.on('log out', function(username){
+      usersActive.delete(username);
+      console.log(usersActive);
+      io.emit('accessDenied', '/');
+    });
+
     socket.on('click upvote', function(thrId, username){
         let logged = usersActive.has(username);
         if(logged == true){
