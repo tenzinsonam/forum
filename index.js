@@ -134,21 +134,21 @@ io.on('connection', function(socket){
                     flag = 1;
                   }
                   if (flag==1){
-                    console.log("aaaaaa");
+                    //console.log("aaaaaa");
                   }
                   else {
-                    console.log("llllllll");
-                    console.log(thrId);
-                    console.log(userid);
+                    //console.log("llllllll");
+                    //console.log(thrId);
+                    //console.log(userid);
                     let sql_query3 = "INSERT INTO "+ thrId +"_uid (uid) VALUES ("+userid+");";
                     con.query(sql_query3, function (err3, res3) {
                         if (err3) throw err3;
-                        console.log(res3);
+                        //console.log(res3);
                         let sql_query4 = "UPDATE threads SET upvotes = upvotes + 1 WHERE id = "+thrId;
                         con.query(sql_query4, function (err4, res4) {
                             if (err4) throw err4;
-                            console.log(res4);
                         });
+                        //console.log(res4);
                     });
                   }
               });
@@ -157,6 +157,17 @@ io.on('connection', function(socket){
         else {
           io.emit('accessDenied', '/');
         }
+    });
+
+    socket.on('view upvoters', function(thrId){
+      console.log("I reached");
+        let sql_query = "SELECT username FROM logincred WHERE id IN (SELECT uid FROM "+ thrId +"_uid)";
+        con.query(sql_query, function (err, result) {
+            if (err) throw err;
+            //console.log("New member added: " + username);
+            io.emit('send upvoters', result);
+            console.log(result);
+        });
     });
 });
 
