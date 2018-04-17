@@ -8,7 +8,7 @@ var path=require('path');
 app.use(express.static(path.join(__dirname, '/cssFiles')))
 app.use(express.static(path.join(__dirname, '/actions')))
 
-let usersActive = [];
+let usersActive = new Set();
 
 var con = mysql.createConnection({
     host: 'localhost',
@@ -54,12 +54,12 @@ io.on('connection', function(socket){
     console.log('user connected');
     con.query('SELECT * FROM threads', function(err, result, fields){
         if(err) throw err;
-        console.log(result);
+        //console.log(result);
         socket.emit('update thread', result);
     });
 
     socket.on('send msg', function(data){
-        console.log('message: '+ data.msg);
+        //console.log('message: '+ data.msg);
         con.query('INSERT INTO '+data.t_name+' (msg) VALUES ("'+ data.msg+'")', function(err, result){
             if(err) throw err;
             io.emit('send msg',data.msg);
@@ -68,7 +68,7 @@ io.on('connection', function(socket){
     });
 
     socket.on('create_thread',function(msg){
-        console.log('thread: '+msg);
+        //console.log('thread: '+msg);
         var insert_thr = "INSERT INTO threads (name, timestamp) VALUES ('" +msg +"',NOW())";
         //console.log(insert_thr);
         con.query(insert_thr, function(err, result){
@@ -94,9 +94,11 @@ io.on('connection', function(socket){
                         username+"' AND pass='"+pass + "';";
         con.query(sql_query, function (err, result) {
           if (err) throw err;
-          if(result.length > 0)
+          if(result.length > 0){
             io.emit('accessAllowed', '/home');
-            usersActive.push(username);
+            usersActive.add(username);
+            console.log(usersActive);
+          }
           else
             io.emit('accessDenied', '/');
         });
@@ -108,11 +110,54 @@ io.on('connection', function(socket){
                           username+"','" + pass + "')";
         con.query(sql_query, function (err, result) {
             if (err) throw err;
-            console.log("New member added: " + username);
+            //console.log("New member added: " + username);
             io.emit('accessAllowed', '/home');
+            usersActive.add(username);
+            console.log(usersActive);
         });
     });
 
+    socket.on('click upvote', function(thrId, username){
+        let logged = usersActive.has(username);
+        if(logged == true){
+          let sql_query = "SELECT id FROM logincred WHERE username='"+username+"';";
+          con.query(sql_query, function (err, result) {
+              if (err) throw err;
+              //console.log(result[0].id.toString());
+              let userid = result[0].id;
+              let sql_query2 = "SELECT * FROM "+ thrId +"_uid WHERE uid="+userid+";";
+              con.query(sql_query2, function (err2, res2){
+                  if (err2) throw err2;
+                  console.log(res2);
+                  let flag = 0;
+                  for (var i in res2){
+                    flag = 1;
+                  }
+                  if (flag==1){
+                    console.log("aaaaaa");
+                  }
+                  else {
+                    console.log("llllllll");
+                    console.log(thrId);
+                    console.log(userid);
+                    let sql_query3 = "INSERT INTO "+ thrId +"_uid (uid) VALUES ("+userid+");";
+                    con.query(sql_query3, function (err3, res3) {
+                        if (err3) throw err3;
+                        console.log(res3);
+                        let sql_query4 = "UPDATE threads SET upvotes = upvotes + 1 WHERE id = "+thrId;
+                        con.query(sql_query4, function (err4, res4) {
+                            if (err4) throw err4;
+                            console.log(res4);
+                        });
+                    });
+                  }
+              });
+          });
+        }
+        else {
+          io.emit('accessDenied', '/');
+        }
+    });
 });
 
 

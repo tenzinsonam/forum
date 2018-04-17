@@ -25,7 +25,7 @@ con.query('CREATE TABLE logincred(id INT AUTO_INCREMENT PRIMARY KEY, username VA
     if(err) throw err;
 });
 
-con.query('CREATE TABLE threads (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255))', function(err, result){
+con.query('CREATE TABLE threads (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), upvotes INT DEFAULT 0, timestamp DATETIME DEFAULT NOW());', function(err, result){
     if(err) throw err;
 });
 

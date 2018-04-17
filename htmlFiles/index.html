@@ -12,7 +12,16 @@
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
     </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   </head>
+  <script>
+function clickUpv(thrId){
+  let username = prompt("Username");
+  let socket = io();
+  socket.emit('click upvote', thrId, username);
+  setTimeout("location.reload(true);", 1000);
+}
+</script>
   <body>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -28,7 +37,8 @@
             //console.log(threads)
             for (var i in threads){
                 console.log(threads[i].name);
-                $('#threads').append('<li><a href="/threads/'+threads[i].id.toString()+'_mid">'+threads[i].name+'</a></li>');
+                $('#threads').append('<li><a href="/threads/'+threads[i].id.toString()+'_mid">'+threads[i].name+'</a></li>'+
+                '<button type="button" class="btn btn-primary" onclick=clickUpv('+threads[i].id+'); >'+ threads[i].upvotes +'</button>');
             }
         });
 
@@ -39,7 +49,8 @@
             return false;
         });
         socket.on('create_thread', function(msg){
-            $('#threads').append('<li><a href="/threads/'+msg[0].id.toString()+'_mid">'+msg[0].name+'</a></li>');
+            $('#threads').append('<li><a href="/threads/'+msg[0].id.toString()+'_mid">'+msg[0].name+'</a></li>'+
+            '<button type="button" class="btn btn-primary" onclick=clickUpv('+msg[0].id+'); >'+ msg[0].upvotes +'</button>');
         });
         });
     </script>
