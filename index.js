@@ -2,6 +2,12 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var mysql = require('mysql');
+var path=require('path');
+
+app.use(express.static(path.join(__dirname, '/cssFiles')))
+app.use(express.static(path.join(__dirname, '/actions')))
+
+userActive = {}
 
 var con = mysql.createConnection({
     host: 'localhost',
@@ -10,15 +16,25 @@ var con = mysql.createConnection({
     database: 'mydb'
 });
 
-con.connect(function(err){
-    if(err) throw err;
-});
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected to the database!");
+})
 
 app.set('view engine', 'ejs');
 
-app.get('/',function(req, res){
-    res.sendFile(__dirname + '/index.html');
-    console.log(__dirname);
+// app.get('/',function(req, res){
+//     res.sendFile(__dirname + '/index.html');
+//     console.log(__dirname);
+// });
+
+app.get('/home', function(req, res){
+    // TODO :: build authentication check here
+  res.sendFile(__dirname + '/htmlFiles/index.html');
+});
+
+app.get('/', function(req, res){
+  res.sendFile(__dirname + '/htmlFiles/login.html');
 });
 
 app.get('/threads/:tname', function(req, res){
@@ -62,7 +78,7 @@ io.on('connection', function(socket){
         con.query(insert_thr, function(err, result){
             if(err) throw err;
             con.query("CREATE TABLE "+ msg+ " (id INT AUTO_INCREMENT PRIMARY KEY, msg VARCHAR(255))", function(err, result){
-                if(err) throw err; 
+                if(err) throw err;
                 io.emit('create_thread', msg);
             });
         });
@@ -72,5 +88,5 @@ io.on('connection', function(socket){
 
 
 http.listen(3000, function(){
-   console.log('listening on *:3000'); 
+   console.log('listening on *:3000');
 });
