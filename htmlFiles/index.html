@@ -22,14 +22,14 @@
         socket.on('connect', function(threads){
             console.log('socket connected');
         });
-        
+
         socket.on('update thread', function(threads){
             //console.log(threads)
             for (var i in threads){
                 console.log(threads[i].name);
                 $('#threads').append('<li><a href="/threads/'+threads[i].id.toString()+'_mid">'+threads[i].name+'</a></li>');
             }
-        }); 
+        });
 
         $('#create_thread').submit(function(){
             socket.emit('create_thread', $('#thread_name').val());

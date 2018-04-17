@@ -9,24 +9,24 @@ var con = mysql.createConnection({
 con.connect(function(err){
     if(err) throw err;
 });
-/*
+
 con.query('DROP TABLE threads', function(err, result){
     if(err) throw err;
 });
 
-var tables = ['1','2','3'];
+var tables = ['heck','nibba','bleh'];
 for(var v in tables){
 con.query('DROP TABLE '+tables[v], function(err, result){
     if(err) throw err;
 });
 };
-*/
 
-con.query('CREATE TABLE threads (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), upvotes INT DEFAULT 0, timestamp DATETIME DEFAULT NOW())', function(err, result){
+
+con.query('CREATE TABLE threads (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255))', function(err, result){
     if(err) throw err;
 });
 
-var values = [[,'1'],[,'2'],[,'3']];
+var values = [[,'heck'],[,'nibba'],[,'bleh']];
 con.query('INSERT INTO threads (id, name) VALUES ?', [values], function(err, result){
     if(err) throw err;
 });
@@ -52,4 +52,3 @@ for(var v in tables_mid){
         if(err) throw err;
     });
 };
-
