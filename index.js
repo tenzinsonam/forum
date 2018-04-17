@@ -4,8 +4,8 @@ var io = require('socket.io')(http);
 var mysql = require('mysql');
 var path=require('path');
 
-app.use(express.static(path.join(__dirname, '/cssFiles')))
-app.use(express.static(path.join(__dirname, '/actions')))
+// app.use(express.static(path.join(__dirname, '/cssFiles')))
+// app.use(express.static(path.join(__dirname, '/actions')))
 
 userActive = {}
 
@@ -25,8 +25,8 @@ app.set('view engine', 'ejs');
 
 // app.get('/',function(req, res){
 //     res.sendFile(__dirname + '/index.html');
-//     console.log(__dirname);
 // });
+//     console.log(__dirname);
 
 app.get('/home', function(req, res){
     // TODO :: build authentication check here
@@ -34,7 +34,7 @@ app.get('/home', function(req, res){
 });
 
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/htmlFiles/login.html');
+  res.sendFile(__dirname + '/htmlFiles/index.html');
 });
 
 app.get('/threads/:tname', function(req, res){
