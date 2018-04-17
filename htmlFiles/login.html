@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <title>askYOgang</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css"  href="login.css" />
+  </head>
+
+  <body>
+    <div id="form-controller">
+      <div id="topDiv">
+        <button onclick="changeView(0)">Already a Member?</button>
+        <button onclick="changeView(1)">Sign Up</button>
+      </div>
+
+      <div id="formDiv">
+        <form action="" id="loginForm">
+          <div>
+            <input id="usernameInput1" autocomplete="off" placeholder="Username"/>
+            <input id="passwordInput1" autocomplete="off" placeholder="Password" type="password"/>
+            <button class="button" style="margin-top:20px;">Login</button>
+          </div>
+        </form>
+
+        <form action="" id="registerForm">
+          <div>
+            <input id="usernameInput2" autocomplete="off" placeholder="Username"/>
+            <input id="passwordInput2" autocomplete="off" placeholder="Password" type="password"/>
+            <input id="passwordInput3" autocomplete="off" placeholder="Retype-Password" type="password"/>
+            <button class="button" style="margin-top:20px;">Register</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="login.js"></script>
+  </body>
+</html>
