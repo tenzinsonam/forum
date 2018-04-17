@@ -17,29 +17,35 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
+
         $(function(){
-        var socket = io();
-        socket.on('connect', function(threads){
-            console.log('socket connected');
-        });
+          var socket = io();
+          socket.on('connect', function(threads){
+              console.log('socket connected');
+          });
 
-        socket.on('update thread', function(threads){
-            //console.log(threads)
-            for (var i in threads){
-                console.log(threads[i].name);
-                $('#threads').append('<li><a href="/threads/'+threads[i].name+'">'+threads[i].name+'</a></li>');
-            }
-        });
+          socket.on('update thread', function(threads){
+              //console.log(threads)
+              for (var i in threads){
+                  console.log(threads[i].name);
+                  $('#threads').append('<li><a href="/threads/'+threads[i].name+'">'+threads[i].name+'</a></li>');
+              }
+          });
 
-        $('#create_thread').submit(function(){
-            socket.emit('create_thread', $('#thread_name').val());
-            console.log($('#thread_name').val());
-            $('#thread_name').val('');
-            return false;
-        });
-        socket.on('create_thread', function(msg){
-            $('#threads').append('<li><a href="/threads/'+msg+'">'+msg+'</a></li>');
-        });
+          $('#create_thread').submit(function(){
+              socket.emit('create_thread', $('#thread_name').val());
+              console.log($('#thread_name').val());
+              $('#thread_name').val('');
+              return false;
+          });
+
+          socket.on('create_thread', function(msg){
+              $('#threads').append('<li><a href="/threads/'+msg+'">'+msg+'</a></li>');
+          });
+
+          socket.on('set_logged', function(msg){
+              $('#threads').append('<li><a href="/threads/'+msg+'">'+msg+'</a></li>');
+          });
         });
     </script>
     <ul id="threads"></ul>

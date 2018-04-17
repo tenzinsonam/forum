@@ -8,7 +8,7 @@ var path=require('path');
 app.use(express.static(path.join(__dirname, '/cssFiles')))
 app.use(express.static(path.join(__dirname, '/actions')))
 
-userActive = {}
+let usersActive = [];
 
 var con = mysql.createConnection({
     host: 'localhost',
@@ -87,6 +87,7 @@ io.on('connection', function(socket){
           if (err) throw err;
           if(result.length > 0)
             io.emit('accessAllowed', '/home');
+            usersActive.push(username);
           else
             io.emit('accessDenied', '/');
         });
