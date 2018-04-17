@@ -69,13 +69,22 @@ io.on('connection', function(socket){
 
     socket.on('create_thread',function(msg){
         console.log('thread: '+msg);
-        var insert_thr = "INSERT INTO threads (name) VALUES ('" +msg +"')";
-        console.log(insert_thr);
+        var insert_thr = "INSERT INTO threads (name, timestamp) VALUES ('" +msg +"',NOW())";
+        //console.log(insert_thr);
         con.query(insert_thr, function(err, result){
             if(err) throw err;
-            con.query("CREATE TABLE "+ msg+ " (id INT AUTO_INCREMENT PRIMARY KEY, msg VARCHAR(255))", function(err, result){
+            con.query("SELECT * FROM threads WHERE name = '"+msg+"'",function(err, result, fields){
+                //console.log(result[0].id);
                 if(err) throw err;
-                io.emit('create_thread', msg);
+                io.emit('create_thread', result);
+                con.query("CREATE TABLE "+result[0].id.toString()+"_mid (id INT AUTO_INCREMENT PRIMARY KEY, msg VARCHAR(255))",function(err, result){
+                    console.log('created mid');
+                    if(err) throw err;
+                });
+                con.query("CREATE TABLE "+result[0].id.toString()+"_uid (uid INT PRIMARY KEY)", function(err, result){
+                    console.log('created uid');
+                    if(err) throw err;
+                });
             });
         });
     });

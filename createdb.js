@@ -34,20 +34,24 @@ con.query('INSERT INTO threads (id, name) VALUES ?', [values], function(err, res
     if(err) throw err;
 });
 
-for(var v in tables){
-    con.query('CREATE TABLE '+tables[v]+' (id INT AUTO_INCREMENT PRIMARY KEY, msg VARCHAR(255))', function(err, result){
+var tables_mid = ['1_mid','2_mid','3_mid']
+for(var v in tables_mid){
+    con.query('CREATE TABLE '+tables_mid[v]+' (id INT AUTO_INCREMENT PRIMARY KEY, msg VARCHAR(255))', function(err, result){
         if(err) throw err;
     });
 };
 
-for(var v in tables){
-    console.log(tables[v]);
+var tables_uid = [1,2,3]
+for(var v in tables_uid){
+    con.query('CREATE TABLE '+tables_uid[v].toString()+'_uid (uid INT KEY)',function(err, result){
+        if(err) throw err;
+    });
+};
+
+for(var v in tables_mid){
+    //console.log(tables[v]);
     var messags = [['cyka'],['blyat'],['ruski']];
-    con.query('INSERT INTO '+tables[v] + ' (msg) VALUES ?', [messags], function(err, result){
+    con.query('INSERT INTO '+tables_mid[v] + ' (msg) VALUES ?', [messags], function(err, result){
         if(err) throw err;
     });
 };
-
-con.query('SELECT * FROM heck', function(err, result){
-    console.log(result);
-});
