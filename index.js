@@ -1,11 +1,12 @@
-var app = require('express')();
+var express=require('express');
+var app=express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var mysql = require('mysql');
 var path=require('path');
 
-// app.use(express.static(path.join(__dirname, '/cssFiles')))
-// app.use(express.static(path.join(__dirname, '/actions')))
+app.use(express.static(path.join(__dirname, '/cssFiles')))
+app.use(express.static(path.join(__dirname, '/actions')))
 
 userActive = {}
 
@@ -23,18 +24,13 @@ con.connect(function(err) {
 
 app.set('view engine', 'ejs');
 
-// app.get('/',function(req, res){
-//     res.sendFile(__dirname + '/index.html');
-// });
-//     console.log(__dirname);
-
 app.get('/home', function(req, res){
     // TODO :: build authentication check here
   res.sendFile(__dirname + '/htmlFiles/index.html');
 });
 
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/htmlFiles/index.html');
+  res.sendFile(__dirname + '/htmlFiles/login.html');
 });
 
 app.get('/threads/:tname', function(req, res){
@@ -81,6 +77,29 @@ io.on('connection', function(socket){
                 if(err) throw err;
                 io.emit('create_thread', msg);
             });
+        });
+    });
+
+    socket.on('login_credentials', function(username, pass){
+        let sql_query = "SELECT * FROM logincred WHERE username='" +
+                        username+"' AND pass='"+pass + "';";
+        con.query(sql_query, function (err, result) {
+          if (err) throw err;
+          if(result.length > 0)
+            io.emit('accessAllowed', '/home');
+          else
+            io.emit('accessDenied', '/');
+        });
+    });
+
+    socket.on('register_credentials', function(username, pass){
+        // TODO :: Check whether the username is distinct
+        let sql_query = "INSERT INTO logincred (username, pass) VALUES ('" +
+                          username+"','" + pass + "')";
+        con.query(sql_query, function (err, result) {
+            if (err) throw err;
+            console.log("New member added: " + username);
+            io.emit('accessAllowed', '/home');
         });
     });
 

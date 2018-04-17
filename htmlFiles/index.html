@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
+    <title>forum</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
@@ -22,14 +22,14 @@
         socket.on('connect', function(threads){
             console.log('socket connected');
         });
-        
+
         socket.on('update thread', function(threads){
             //console.log(threads)
             for (var i in threads){
                 console.log(threads[i].name);
                 $('#threads').append('<li><a href="/threads/'+threads[i].name+'">'+threads[i].name+'</a></li>');
             }
-        }); 
+        });
 
         $('#create_thread').submit(function(){
             socket.emit('create_thread', $('#thread_name').val());
