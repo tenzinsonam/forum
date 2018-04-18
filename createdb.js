@@ -21,7 +21,11 @@ con.query('DROP TABLE '+tables[v], function(err, result){
 });
 };
 
-con.query('CREATE TABLE logincred(id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255), pass VARCHAR(255), karma INT DEFAULT 0);', function(err, result){
+con.query('CREATE TABLE logincred(id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(15), pass VARCHAR(255));', function(err, result){
+    if(err) throw err;
+});
+
+con.query('CREATE TABLE persAttr (username VARCHAR(15) PRIMARY KEY, karma INT DEFAULT 0, gender VARCHAR(10) DEFAULT '', age INT DEFAULT 25);', function(err, result){
     if(err) throw err;
 });
 

@@ -71,7 +71,7 @@ io.on('connection', function(socket){
         //console.log('thread: '+msg);
         let logged = usersActive.has(username);
         if(logged == true){
-            let sql_query5 = "UPDATE logincred SET karma = karma + 7 WHERE username = '"+username+"';";
+            let sql_query5 = "UPDATE persAttr SET karma = karma + 7 WHERE username = '"+username+"';";
             con.query(sql_query5, function (err5, res5) {
                 if (err5) throw err5;
             });
@@ -121,9 +121,15 @@ io.on('connection', function(socket){
         con.query(sql_query, function (err, result) {
             if (err) throw err;
             //console.log("New member added: " + username);
-            io.emit('accessAllowed', '/home');
-            usersActive.add(username);
-            console.log(usersActive);
+            let sql_query2 = "INSERT INTO persAttr (username) VALUES ('" +
+                              username+"');";
+            con.query(sql_query2, function (err2, result2) {
+                if (err) throw err;
+                //console.log("New member added: " + username);
+                io.emit('accessAllowed', '/home');
+                usersActive.add(username);
+                console.log(usersActive);
+            });
         });
     });
 
@@ -164,10 +170,10 @@ io.on('connection', function(socket){
                         let sql_query4 = "UPDATE threads SET upvotes = upvotes + 1 WHERE id = "+thrId;
                         con.query(sql_query4, function (err4, res4) {
                             if (err4) throw err4;
-                            let sql_query5 = "UPDATE logincred SET karma = karma + 2 WHERE id = "+userid;
+                            let sql_query5 = "UPDATE persAttr SET karma = karma + 2 WHERE username = '"+username+"';";
                             con.query(sql_query5, function (err5, res5) {
                                 if (err5) throw err5;
-                                let sql_query8 = "UPDATE logincred SET karma = karma + 3 WHERE username = '"+creator+"';";
+                                let sql_query8 = "UPDATE persAttr SET karma = karma + 3 WHERE username = '"+creator+"';";
                                 con.query(sql_query8, function (err8, res8) {
                                     if (err8) throw err8;
                                 });
