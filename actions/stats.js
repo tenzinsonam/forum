@@ -104,6 +104,11 @@ $(function(){
 		socket.emit('top_karma');
 		
 	});
+	
+	$('#comm_user').submit(function(){
+		socket.emit('usr_thr', $('#usr').val());
+		return false;		
+	});
 	//SELECT * FROM threads ORDER BY upvotes DESC LIMIT 3;
 	
 });

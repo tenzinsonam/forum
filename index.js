@@ -264,6 +264,72 @@ io.on('connection', function(socket){
             socket.emit('top_kar', result);
         });
     });
+
+    function* gener(list){
+        for(var x in list){
+            yield list[x].id;
+        }
+    }
+
+    socket.on('usr_thr', function(userid){
+        con.query('SELECT * FROM threads;', function(err, result, fields){
+            console.log(result);
+            //generator thing
+            var gen = gener(result);
+            var tmp = gen.next();
+            function cback(tmp, userid){
+                con.query('SELECT * FROM '+tmp.value+'_uid WHERE uid = '+userid+';', function(err, result1, fields){
+                    console.log(tmp.value);
+                    console.log('SELECT * FROM '+tmp.value+'_uid WHERE uid = '+userid+';');
+                    console.log(result1);
+                    tmp= gen.next();
+                    if(!tmp.done){
+                        return cback(tmp, userid);
+                    }
+                    
+                });
+                
+            };
+            cback(tmp, userid);
+/*
+            con.query('SELECT * FROM '+tmp.value+'_uid WHERE uid = '+userid+';', function(err, result1, fields){
+                if(!tmp.done){
+                    tmp= gen.next();
+                    return cback(tmp, userid);
+                }
+                
+            });
+            */
+            
+            
+            /*
+            var tmp2 = 1;
+            while(!tmp.done){
+                console.log(tmp.value);
+                console.log('SELECT * FROM '+tmp.value+'_uid WHERE uid = '+userid+';');
+                if(tmp2){
+                    tmp2=0;
+                    con.query('SELECT * FROM '+tmp.value+'_uid WHERE uid = '+userid+';',function(err, result1, fields){
+                        console.log(tmp.value+': '+result1);
+                        tmp = gen.next();
+                        tmp2=1;
+                    });
+                    
+                }
+                //tmp = gen.next();
+            }*/
+            
+            /*
+            for(var v in result){
+                console.log(result[v].id);
+                var thr_name = result[v].id+'_uid';
+                con.query('SELECT * FROM '+thr_name+' WHERE username = '+username+';', function(err, result1, fields){
+                    console.log('SELECT * FROM '+thr_name+' WHERE username = '+username+';');
+                    console.log(thr_name+':'+result1);
+                });
+            }*/
+        });
+    });
 });
 
 
