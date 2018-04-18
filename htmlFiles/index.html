@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
+    <title>forum</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
@@ -12,40 +12,95 @@
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
     </style>
+    <style>
+  a:link {
+      color: green;
+      background-color: transparent;
+      text-decoration: none;
+  }
+</style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="theme.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   </head>
+  <script>
+function clickUpv(thrId, creator){
+  let username = prompt("Username");
+  let socket = io();
+  socket.emit('click upvote', thrId, username, creator);
+  setTimeout("location.reload(true);", 1000);
+}
+function viewUpv(thrId){
+  let socket = io();
+  socket.emit('view upvoters', thrId);
+}
+function logmeout(){
+  let username = prompt("Username");
+  let socket = io();
+  socket.emit('log out', username);
+}
+</script>
   <body>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
+
         $(function(){
-        var socket = io();
-        socket.on('connect', function(threads){
-            console.log('socket connected');
-        });
+            var socket = io();
+            socket.on('connect', function(threads){
+                console.log('socket connected');
+            });
 
-        socket.on('update thread', function(threads){
-            //console.log(threads)
-            for (var i in threads){
-                console.log(threads[i].name);
-                $('#threads').append('<li><a href="/threads/'+threads[i].id.toString()+'_mid">'+threads[i].name+'</a></li>');
-            }
-        });
+            socket.on('update thread', function(threads){
+                //console.log(threads)
+                for (var i in threads){
+                    console.log(threads[i].name);
+                    $('#threads').append('<li><a class="list-group-item" href="/threads/'+threads[i].id.toString()+'_mid">'+ threads[i].id.toString() + ": "+ threads[i].creator+ ': ' +threads[i].name+'</a></li>'+
+                    '<button type="button" class="btn btn-primary" onclick=clickUpv('+threads[i].id+',"'+ threads[i].creator +'"); >Upvote ('+ threads[i].upvotes +')</button>'+
+                    '<button type="button" class="btn btn-info" onclick=viewUpv('+threads[i].id+'); >View Upvoters</button>');
+                }
+            });
 
-        $('#create_thread').submit(function(){
-            socket.emit('create_thread', $('#thread_name').val());
-            console.log($('#thread_name').val());
-            $('#thread_name').val('');
-            return false;
-        });
-        socket.on('create_thread', function(msg){
-            $('#threads').append('<li><a href="/threads/'+msg[0].id.toString()+'_mid">'+msg[0].name+'</a></li>');
-        });
+            $('#create_thread').submit(function(){
+                let username = prompt("Username");
+                socket.emit('create_thread', $('#thread_name').val(), username);
+                //console.log($('#thread_name').val());
+                $('#thread_name').val('');
+                return false;
+            });
+            socket.on('make_thread', function(msg){
+                $('#threads').append('<li><a class="list-group-item" href="/threads/'+msg[0].id.toString()+'_mid">'+ msg[0].id.toString() + ": " + msg[0].creator+ ': ' +msg[0].name+'</a></li>'+
+                '<button type="button" class="btn btn-primary" onclick=clickUpv('+msg[0].id+',"'+ msg[0].creator +'"); >Upvote ('+ msg[0].upvotes +')</button>'+
+                '<button type="button" class="btn btn-info" onclick=viewUpv('+msg[0].id+'); >View Upvoters</button>');
+            });
+            socket.on('send upvoters', function(list){
+              let myWindow = window.open("", "MsgWindow", "width=400,height=800");
+              let str = '';
+              for (var i in list){
+                str = str + list[i].username + "<br>";
+              }
+              myWindow.document.write("<p>"+str+"</p>");
+            });
+            socket.on('accessAllowed', function(site){
+              window.location.href = site;
+            });
+            socket.on('accessDenied', function(site){
+              window.location.href = site;
+            });
         });
     </script>
-    <ul id="threads"></ul>
+    <button type="button" class="btn btn-danger" onclick=logmeout();>LogOut</button>
+    <a href="stats"><button type="button" class="btn btn-success" >Statistics</button></a>
+    <div class="container">
+    <div class="list-group">
+    <ul id="threads" style="background-color: transparent;"></ul>
+    </div>
+    </div>
     <form action="" id='create_thread'>
-      <input id='thread_name' type='text' value=''>
-      <input type='submit' value='submit'>
+      <input id='thread_name' type='text' value='' autocomplete="off">
+      <!--<input type='submit' value='submit'>-->
+      <button type='submit' value='submit'>Send</button>
     </form>
   </body>
 </html>

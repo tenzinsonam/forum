@@ -8,7 +8,7 @@
     });
     $('#registerForm').submit(function(){
       if($('#passwordInput2').val() == $('#passwordInput3').val())
-        socket.emit('register_credentials', $('#usernameInput2').val(),$('#passwordInput2').val());
+        socket.emit('register_credentials', $('#usernameInput2').val(),$('#passwordInput2').val(),$('#genderInput1').val(),$('#ageInput1').val());
       else{
         console.log("Passwords do not match.");
       }
