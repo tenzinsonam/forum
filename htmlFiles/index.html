@@ -16,10 +16,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   </head>
   <script>
-function clickUpv(thrId){
+function clickUpv(thrId, creator){
   let username = prompt("Username");
   let socket = io();
-  socket.emit('click upvote', thrId, username);
+  socket.emit('click upvote', thrId, username, creator);
   setTimeout("location.reload(true);", 1000);
 }
 function viewUpv(thrId){
@@ -47,8 +47,8 @@ function logmeout(){
                 //console.log(threads)
                 for (var i in threads){
                     console.log(threads[i].name);
-                    $('#threads').append('<li><a href="/threads/'+threads[i].id.toString()+'_mid">'+threads[i].name+'</a></li>'+
-                    '<button type="button" class="btn btn-primary" onclick=clickUpv('+threads[i].id+'); >Upvote ('+ threads[i].upvotes +')</button>'+
+                    $('#threads').append('<li><a href="/threads/'+threads[i].id.toString()+'_mid">'+ threads[i].creator+ ': ' +threads[i].name+'</a></li>'+
+                    '<button type="button" class="btn btn-primary" onclick=clickUpv('+threads[i].id+',"'+ threads[i].creator +'"); >Upvote ('+ threads[i].upvotes +')</button>'+
                     '<button type="button" class="btn btn-info" onclick=viewUpv('+threads[i].id+'); >View Upvoters</button>');
                 }
             });
@@ -60,9 +60,9 @@ function logmeout(){
                 $('#thread_name').val('');
                 return false;
             });
-            socket.on('create_thread', function(msg){
-                $('#threads').append('<li><a href="/threads/'+msg[0].id.toString()+'_mid">'+msg[0].name+'</a></li>'+
-                '<button type="button" class="btn btn-primary" onclick=clickUpv('+msg[0].id+'); >Upvote ('+ msg[0].upvotes +')</button>'+
+            socket.on('make_thread', function(msg){
+                $('#threads').append('<li><a href="/threads/'+msg[0].id.toString()+'_mid">'+ msg[0].creator+ ': ' +msg[0].name+'</a></li>'+
+                '<button type="button" class="btn btn-primary" onclick=clickUpv('+msg[0].id+',"'+ msg[0].creator +'"); >Upvote ('+ msg[0].upvotes +')</button>'+
                 '<button type="button" class="btn btn-info" onclick=viewUpv('+msg[0].id+'); >View Upvoters</button>');
             });
             socket.on('send upvoters', function(list){

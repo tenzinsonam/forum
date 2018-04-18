@@ -75,14 +75,14 @@ io.on('connection', function(socket){
             con.query(sql_query5, function (err5, res5) {
                 if (err5) throw err5;
             });
-            var insert_thr = "INSERT INTO threads (name, timestamp) VALUES ('" +msg +"',NOW())";
+            var insert_thr = "INSERT INTO threads (name, timestamp, creator) VALUES ('" +msg +"',NOW(), '"+username+"')";
             //console.log(insert_thr);
             con.query(insert_thr, function(err, result){
                 if(err) throw err;
                 con.query("SELECT * FROM threads WHERE name = '"+msg+"'",function(err, result, fields){
                     //console.log(result[0].id);
                     if(err) throw err;
-                    io.emit('create_thread', result);
+                    io.emit('make_thread', result);
                     con.query("CREATE TABLE "+result[0].id.toString()+"_mid (id INT AUTO_INCREMENT PRIMARY KEY, msg VARCHAR(255))",function(err, result){
                         //console.log('created mid');
                         if(err) throw err;
@@ -133,7 +133,8 @@ io.on('connection', function(socket){
       io.emit('accessDenied', '/');
     });
 
-    socket.on('click upvote', function(thrId, username){
+    socket.on('click upvote', function(thrId, username, creator){
+        console.log("Creator is here: "+creator);
         let logged = usersActive.has(username);
         if(logged == true){
           let sql_query = "SELECT id FROM logincred WHERE username='"+username+"';";
@@ -166,7 +167,10 @@ io.on('connection', function(socket){
                             let sql_query5 = "UPDATE logincred SET karma = karma + 2 WHERE id = "+userid;
                             con.query(sql_query5, function (err5, res5) {
                                 if (err5) throw err5;
-
+                                let sql_query8 = "UPDATE logincred SET karma = karma + 3 WHERE username = '"+creator+"';";
+                                con.query(sql_query8, function (err8, res8) {
+                                    if (err8) throw err8;
+                                });
                             });
                         });
                         //console.log(res4);
