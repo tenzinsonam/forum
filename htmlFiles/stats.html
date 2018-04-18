@@ -18,19 +18,23 @@
         <li>
             Thread:
             <form action='' id='stat_thread'>
-                <input type='text' id='thr_start' value=''>
-                <input type='text' id='thr_stop' value=''>
+                <input type='text' id='thr_start' value='1000-01-01 00:00:00' name='start time'>
+                <input type='text' id='thr_stop' value='9999-12-31 23:59:59' name='end time'>
                 <input type='submit' value='submit'>
             </form>
+
+
         </li>
         <li>
             User:
             <form action='' id='stat_user'>
-                <input type='text' id='user_name' value=''>
-                <select id='question'>
+                <input type='text' id='user_name' value='' name='username'>
+                <select id='question' name='field'>
+                    <option value='none'>none</option>
                     <option value='gender'>gender</option>
                     <option value='age'>age</option>
                 </select>
+                <input type='text' value='' name='value' id='valu'>
                 <input type='submit' value='submit'>
             </form>
         </li>

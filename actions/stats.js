@@ -10,11 +10,49 @@ $(function(){
 	socket.on('thread_statist', function(list){
 		var myWindow = window.open("", "StatWindow", "width=400,height=800");
         var str = '';
-        console.log(list)
+        //console.log('here');
         for (var i in list){
         	str = str + list[i].name + "<br>";
         }
         myWindow.document.write("<p>"+str+"</p>");
+		
+	});
+	
+	socket.on('user_statist_u', function(list, quest){
+		var myWindow = window.open("", "StatWindow", "width=400,height=800");
+        var str = '';
+        console.log(list);
+        //console.log(eval(list[0]+'.'+quest));
+        for (var i in list){
+        	if(quest=='gender'){
+        		str = str + list[i].gender + "<br>";	
+        	}
+        	else if(quest=='age'){
+        		str = str + list[i].age + "<br>";	
+        	}
+        	//str = str + 'bleh' + "<br>";
+        }
+        myWindow.document.write("<p>"+str+"</p>");
+	});
+	//eval(list[i]+'.'+quest)
+	
+	socket.on('user_statist_v', function(list){
+		var myWindow = window.open("", "StatWindow", "width=400,height=800");
+        var str = '';
+        //console.log(list)
+        for (var i in list){
+        	str = str + list[i].username + "<br>";
+        	
+        }
+        myWindow.document.write("<p>"+str+"</p>");
+		
+	});
+	
+	socket.on('error_state',function(){
+		var myWindow = window.open("", "StatWindow", "width=400,height=800");
+        var str = 'nonononono';
+        //console.log(val);
+		myWindow.document.write("<p>"+str+"</p>");
 		
 	});
 	
@@ -26,4 +64,11 @@ $(function(){
 			
 	});
 	
-})
+	$('#stat_user').submit(function(){
+		//console.log($('select#user_name option:checked').val())
+		console.log('user submit');
+		socket.emit('stat_user',$('#user_name').val(), $('select#question option:checked').val(), $('#valu').val());
+		return false;		
+	});
+	
+});

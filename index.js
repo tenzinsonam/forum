@@ -221,10 +221,33 @@ io.on('connection', function(socket){
 
     socket.on('stat_thread', function(start, stop){
         con.query('SELECT * FROM threads WHERE timestamp > CAST("'+start+'" AS DATETIME) AND timestamp < CAST("'+stop+'" AS DATETIME);', function(err, result, fields){
-            console.log('SELECT * FROM threads WHERE timestamp > CAST("'+start+'" AS DATETIME) AND timestamp < CAST("'+stop+'" AS DATETIME);');
-            console.log(result);
+            //console.log('SELECT * FROM threads WHERE timestamp > CAST("'+start+'" AS DATETIME) AND timestamp < CAST("'+stop+'" AS DATETIME);');
+            //console.log(result);
             io.emit('thread_statist', result); 
         }); 
+    });
+
+    socket.on('stat_user', function(user, quest, valu){
+        if(user!='' && valu==''){
+            con.query('SELECT '+quest+' FROM persAttr WHERE username = "'+user+'";',function(err, result, fields){
+                console.log(result);
+                //console.log('SELECT '+quest+' FROM persAttr WHERE username = "'+user+'";');
+                //var tmp = result[0]+'.'+quest;
+                //console.log(tmp);
+                socket.emit('user_statist_u', result, quest);    
+            });
+        }
+        else if(user=='' && valu!=''){
+            
+            con.query('SELECT * FROM persAttr WHERE '+quest+' = "'+valu+'";', function(err, result, fields){
+                console.log(result);
+                socket.emit('user_statist_v', result);
+                      
+            });
+        }
+        else{
+            socket.emit('error_state');
+        }
     });
 });
 
