@@ -267,67 +267,47 @@ io.on('connection', function(socket){
 
     function* gener(list){
         for(var x in list){
-            yield list[x].id;
+            yield list[x];
         }
     }
 
-    socket.on('usr_thr', function(userid){
-        con.query('SELECT * FROM threads;', function(err, result, fields){
-            console.log(result);
-            //generator thing
-            var gen = gener(result);
-            var tmp = gen.next();
-            function cback(tmp, userid){
-                con.query('SELECT * FROM '+tmp.value+'_uid WHERE uid = '+userid+';', function(err, result1, fields){
-                    console.log(tmp.value);
-                    console.log('SELECT * FROM '+tmp.value+'_uid WHERE uid = '+userid+';');
-                    console.log(result1);
-                    tmp= gen.next();
-                    if(!tmp.done){
-                        return cback(tmp, userid);
-                    }
-                    
-                });
-                
-            };
-            cback(tmp, userid);
-/*
-            con.query('SELECT * FROM '+tmp.value+'_uid WHERE uid = '+userid+';', function(err, result1, fields){
-                if(!tmp.done){
-                    tmp= gen.next();
-                    return cback(tmp, userid);
-                }
-                
-            });
-            */
-            
-            
-            /*
-            var tmp2 = 1;
-            while(!tmp.done){
-                console.log(tmp.value);
-                console.log('SELECT * FROM '+tmp.value+'_uid WHERE uid = '+userid+';');
-                if(tmp2){
-                    tmp2=0;
-                    con.query('SELECT * FROM '+tmp.value+'_uid WHERE uid = '+userid+';',function(err, result1, fields){
-                        console.log(tmp.value+': '+result1);
-                        tmp = gen.next();
-                        tmp2=1;
+    socket.on('usr_thr', function(username){
+        con.query('SELECT * FROM logincred WHERE username = "'+username+'";', function(err, result0, fields){
+            if(err) throw err;
+            //console.log('SELECT * FROM logincred WHERE username = "'+username+'";');
+            //console.log(result0[0].id);
+            var userid = result0[0].id;
+            con.query('SELECT * FROM threads;', function(err, result, fields){
+                //console.log(result);
+                //generator thing
+                var gen = gener(result);
+                var tmp = gen.next();
+                var thr_list = [];
+                function cback(tmp, userid){
+                    con.query('SELECT * FROM '+tmp.value.id+'_uid WHERE uid = '+userid+';', function(err, result1, fields){
+                        //console.log(tmp.value);
+                        //console.log('SELECT * FROM '+tmp.value.id+'_uid WHERE uid = '+userid+';');
+                        //console.log(result1);
+                        if(result1[0]!= null){
+                            thr_list.push(tmp.value.name);
+                        }
+                        tmp= gen.next();
+                        if(!tmp.done){
+                            return cback(tmp, userid);
+                        }
+                        else{
+                            //console.log('am i here?');
+                            //console.log(thr_list);
+                            socket.emit('usr_thrd', thr_list);
+                        }
+                        
                     });
                     
-                }
-                //tmp = gen.next();
-            }*/
+                };
+                cback(tmp, userid);
+                
+            });
             
-            /*
-            for(var v in result){
-                console.log(result[v].id);
-                var thr_name = result[v].id+'_uid';
-                con.query('SELECT * FROM '+thr_name+' WHERE username = '+username+';', function(err, result1, fields){
-                    console.log('SELECT * FROM '+thr_name+' WHERE username = '+username+';');
-                    console.log(thr_name+':'+result1);
-                });
-            }*/
         });
     });
 });
