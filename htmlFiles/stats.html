@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+    <head>
+        <title>
+            stats
+        </title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+         <script src="/socket.io/socket.io.js"></script>
+         <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+         <script src='stats.js'></script> 
+    </head>
+    <body>
+        <ul>
+        <li>
+            Thread:
+            <form action='' id='stat_thread'>
+                <input type='text' id='thr_start' value=''>
+                <input type='text' id='thr_stop' value=''>
+                <input type='submit' value='submit'>
+            </form>
+        </li>
+        <li>
+            User:
+            <form action='' id='stat_user'>
+                <input type='text' id='user_name' value=''>
+                <select id='question'>
+                    <option value='gender'>gender</option>
+                    <option value='age'>age</option>
+                </select>
+                <input type='submit' value='submit'>
+            </form>
+        </li>
+        </ul>
+    </body>
+</html>

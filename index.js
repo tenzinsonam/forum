@@ -8,7 +8,7 @@ var path=require('path');
 app.use(express.static(path.join(__dirname, '/cssFiles')))
 app.use(express.static(path.join(__dirname, '/actions')))
 
-let usersActive = new Set();
+var usersActive = new Set();
 
 var con = mysql.createConnection({
     host: 'localhost',
@@ -73,9 +73,9 @@ io.on('connection', function(socket){
 
     socket.on('create_thread',function(msg, username){
         //console.log('thread: '+msg);
-        let logged = usersActive.has(username);
+        var logged = usersActive.has(username);
         if(logged == true){
-            let sql_query5 = "UPDATE persAttr SET karma = karma + 7 WHERE username = '"+username+"';";
+            var sql_query5 = "UPDATE persAttr SET karma = karma + 7 WHERE username = '"+username+"';";
             con.query(sql_query5, function (err5, res5) {
                 if (err5) throw err5;
             });
@@ -104,7 +104,7 @@ io.on('connection', function(socket){
     });
 
     socket.on('login_credentials', function(username, pass){
-        let sql_query = "SELECT * FROM logincred WHERE username='" +
+        var sql_query = "SELECT * FROM logincred WHERE username='" +
                         username+"' AND pass='"+pass + "';";
         con.query(sql_query, function (err, result) {
           if (err) throw err;
@@ -120,20 +120,20 @@ io.on('connection', function(socket){
 
     socket.on('register_credentials', function(username, pass, gender, age){
         // TODO :: Check whether the username is distinct
-        let sql2 = "SELECT * FROM logincred WHERE username ='"+username+"';";
+        var sql2 = "SELECT * FROM logincred WHERE username ='"+username+"';";
         con.query(sql2, function (err00, result00) {
             if (err00) throw err00;
-            let flag = 0;
+            var flag = 0;
             for (var i in result00){
               flag = 1;
             }
             if(flag==0){
-                let sql_query = "INSERT INTO logincred (username, pass) VALUES ('" +
+                var sql_query = "INSERT INTO logincred (username, pass) VALUES ('" +
                                   username+"','" + pass + "')";
                 con.query(sql_query, function (err, result) {
                     if (err) throw err;
                     //console.log("New member added: " + username);
-                    let sql_query2 = "INSERT INTO persAttr (username, gender, age) VALUES ('" + username+"','" + gender+"'," + age+");";
+                    var sql_query2 = "INSERT INTO persAttr (username, gender, age) VALUES ('" + username+"','" + gender+"'," + age+");";
                     con.query(sql_query2, function (err2, result2) {
                         if (err2) throw err2;
                         //console.log("New member added: " + username);
@@ -159,18 +159,18 @@ io.on('connection', function(socket){
 
     socket.on('click upvote', function(thrId, username, creator){
         console.log("Creator is here: "+creator);
-        let logged = usersActive.has(username);
+        var logged = usersActive.has(username);
         if(logged == true){
-          let sql_query = "SELECT id FROM logincred WHERE username='"+username+"';";
+          var sql_query = "SELECT id FROM logincred WHERE username='"+username+"';";
           con.query(sql_query, function (err, result) {
               if (err) throw err;
               //console.log(result[0].id.toString());
-              let userid = result[0].id;
-              let sql_query2 = "SELECT * FROM "+ thrId +"_uid WHERE uid="+userid+";";
+              var userid = result[0].id;
+              var sql_query2 = "SELECT * FROM "+ thrId +"_uid WHERE uid="+userid+";";
               con.query(sql_query2, function (err2, res2){
                   if (err2) throw err2;
                   console.log(res2);
-                  let flag = 0;
+                  var flag = 0;
                   for (var i in res2){
                     flag = 1;
                   }
@@ -181,17 +181,17 @@ io.on('connection', function(socket){
                     //console.log("llllllll");
                     //console.log(thrId);
                     //console.log(userid);
-                    let sql_query3 = "INSERT INTO "+ thrId +"_uid (uid) VALUES ("+userid+");";
+                    var sql_query3 = "INSERT INTO "+ thrId +"_uid (uid) VALUES ("+userid+");";
                     con.query(sql_query3, function (err3, res3) {
                         if (err3) throw err3;
                         //console.log(res3);
-                        let sql_query4 = "UPDATE threads SET upvotes = upvotes + 1 WHERE id = "+thrId;
+                        var sql_query4 = "UPDATE threads SET upvotes = upvotes + 1 WHERE id = "+thrId;
                         con.query(sql_query4, function (err4, res4) {
                             if (err4) throw err4;
-                            let sql_query5 = "UPDATE persAttr SET karma = karma + 2 WHERE username = '"+username+"';";
+                            var sql_query5 = "UPDATE persAttr SET karma = karma + 2 WHERE username = '"+username+"';";
                             con.query(sql_query5, function (err5, res5) {
                                 if (err5) throw err5;
-                                let sql_query8 = "UPDATE persAttr SET karma = karma + 3 WHERE username = '"+creator+"';";
+                                var sql_query8 = "UPDATE persAttr SET karma = karma + 3 WHERE username = '"+creator+"';";
                                 con.query(sql_query8, function (err8, res8) {
                                     if (err8) throw err8;
                                 });
@@ -210,13 +210,21 @@ io.on('connection', function(socket){
 
     socket.on('view upvoters', function(thrId){
       console.log("I reached");
-        let sql_query = "SELECT username FROM logincred WHERE id IN (SELECT uid FROM "+ thrId +"_uid)";
+        var sql_query = "SELECT username FROM logincred WHERE id IN (SELECT uid FROM "+ thrId +"_uid)";
         con.query(sql_query, function (err, result) {
             if (err) throw err;
             //console.log("New member added: " + username);
             io.emit('send upvoters', result);
             console.log(result);
         });
+    });
+
+    socket.on('stat_thread', function(start, stop){
+        con.query('SELECT * FROM threads WHERE timestamp > CAST("'+start+'" AS DATETIME) AND timestamp < CAST("'+stop+'" AS DATETIME);', function(err, result, fields){
+            console.log('SELECT * FROM threads WHERE timestamp > CAST("'+start+'" AS DATETIME) AND timestamp < CAST("'+stop+'" AS DATETIME);');
+            console.log(result);
+            io.emit('thread_statist', result); 
+        }); 
     });
 });
 
