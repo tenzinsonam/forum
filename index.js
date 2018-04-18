@@ -33,6 +33,10 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/htmlFiles/login.html');
 });
 
+app.get('/stats', function(req, res){
+  res.sendFile(__dirname + '/htmlFiles/stats.html');
+});
+
 app.get('/threads/:tname', function(req, res){
     var thread_name = req.params['tname'];
     var msg_list = [];
@@ -116,19 +120,32 @@ io.on('connection', function(socket){
 
     socket.on('register_credentials', function(username, pass, gender, age){
         // TODO :: Check whether the username is distinct
-        let sql_query = "INSERT INTO logincred (username, pass) VALUES ('" +
-                          username+"','" + pass + "')";
-        con.query(sql_query, function (err, result) {
-            if (err) throw err;
-            //console.log("New member added: " + username);
-            let sql_query2 = "INSERT INTO persAttr (username, gender, age) VALUES ('" + username+"','" + gender+"'," + age+");";
-            con.query(sql_query2, function (err2, result2) {
-                if (err) throw err;
-                //console.log("New member added: " + username);
-                io.emit('accessAllowed', '/home');
-                usersActive.add(username);
-                console.log(usersActive);
-            });
+        let sql2 = "SELECT * FROM logincred WHERE username ='"+username+"';";
+        con.query(sql2, function (err00, result00) {
+            if (err00) throw err00;
+            let flag = 0;
+            for (var i in result00){
+              flag = 1;
+            }
+            if(flag==0){
+                let sql_query = "INSERT INTO logincred (username, pass) VALUES ('" +
+                                  username+"','" + pass + "')";
+                con.query(sql_query, function (err, result) {
+                    if (err) throw err;
+                    //console.log("New member added: " + username);
+                    let sql_query2 = "INSERT INTO persAttr (username, gender, age) VALUES ('" + username+"','" + gender+"'," + age+");";
+                    con.query(sql_query2, function (err2, result2) {
+                        if (err2) throw err2;
+                        //console.log("New member added: " + username);
+                        io.emit('accessAllowed', '/home');
+                        usersActive.add(username);
+                        console.log(usersActive);
+                    });
+                });
+            }
+            else {
+              io.emit('accessDenied', '/');
+            }
         });
     });
 

@@ -56,7 +56,7 @@ function logmeout(){
                 //console.log(threads)
                 for (var i in threads){
                     console.log(threads[i].name);
-                    $('#threads').append('<li><a class="list-group-item" href="/threads/'+threads[i].id.toString()+'_mid">'+ threads[i].creator+ ': ' +threads[i].name+'</a></li>'+
+                    $('#threads').append('<li><a class="list-group-item" href="/threads/'+threads[i].id.toString()+'_mid">'+ threads[i].id.toString() + ": "+ threads[i].creator+ ': ' +threads[i].name+'</a></li>'+
                     '<button type="button" class="btn btn-primary" onclick=clickUpv('+threads[i].id+',"'+ threads[i].creator +'"); >Upvote ('+ threads[i].upvotes +')</button>'+
                     '<button type="button" class="btn btn-info" onclick=viewUpv('+threads[i].id+'); >View Upvoters</button>');
                 }
@@ -70,7 +70,7 @@ function logmeout(){
                 return false;
             });
             socket.on('make_thread', function(msg){
-                $('#threads').append('<li><a class="list-group-item" href="/threads/'+msg[0].id.toString()+'_mid">'+ msg[0].creator+ ': ' +msg[0].name+'</a></li>'+
+                $('#threads').append('<li><a class="list-group-item" href="/threads/'+msg[0].id.toString()+'_mid">'+ msg[0].id.toString() + ": " + msg[0].creator+ ': ' +msg[0].name+'</a></li>'+
                 '<button type="button" class="btn btn-primary" onclick=clickUpv('+msg[0].id+',"'+ msg[0].creator +'"); >Upvote ('+ msg[0].upvotes +')</button>'+
                 '<button type="button" class="btn btn-info" onclick=viewUpv('+msg[0].id+'); >View Upvoters</button>');
             });
@@ -91,6 +91,7 @@ function logmeout(){
         });
     </script>
     <button type="button" class="btn btn-danger" onclick=logmeout();>LogOut</button>
+    <a href="stats"><button type="button" class="btn btn-success" >Statistics</button></a>
     <div class="container">
     <div class="list-group">
     <ul id="threads" style="background-color: transparent;"></ul>
