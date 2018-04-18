@@ -73,9 +73,15 @@ function logmeout(){
               }
               myWindow.document.write("<p>"+str+"</p>");
             });
+            socket.on('accessAllowed', function(site){
+              window.location.href = site;
+            });
+            socket.on('accessDenied', function(site){
+              window.location.href = site;
+            });
         });
     </script>
-    <button type="button" class="btn btn-danger onclick=logmeout();">LogOut</button>
+    <button type="button" class="btn btn-danger" onclick=logmeout();>LogOut</button>
     <ul id="threads"></ul>
     <form action="" id='create_thread'>
       <input id='thread_name' type='text' value='' autocomplete="off">

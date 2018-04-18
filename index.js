@@ -134,6 +134,8 @@ io.on('connection', function(socket){
     });
 
     socket.on('log out', function(username){
+      console.log("cameeeeeeeeeeeee")
+      console.log(usersActive);
       usersActive.delete(username);
       console.log(usersActive);
       io.emit('accessDenied', '/');
