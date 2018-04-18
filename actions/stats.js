@@ -48,6 +48,30 @@ $(function(){
 		
 	});
 	
+	socket.on('top_thr', function(list){
+		var myWindow = window.open("", "StatWindow", "width=400,height=800");
+        var str = '';
+        //console.log(list)
+        for (var i in list){
+        	str = str + list[i].name + "<br>";
+        	
+        }
+        myWindow.document.write("<p>"+str+"</p>");
+		
+	});
+	
+	socket.on('top_kar', function(list){
+		var myWindow = window.open("", "StatWindow", "width=400,height=800");
+        var str = '';
+        //console.log(list)
+        for (var i in list){
+        	str = str + list[i].username + "<br>";
+        	
+        }
+        myWindow.document.write("<p>"+str+"</p>");
+		
+	});
+	
 	socket.on('error_state',function(){
 		var myWindow = window.open("", "StatWindow", "width=400,height=800");
         var str = 'nonononono';
@@ -70,5 +94,16 @@ $(function(){
 		socket.emit('stat_user',$('#user_name').val(), $('select#question option:checked').val(), $('#valu').val());
 		return false;		
 	});
+	
+	$('#top_th').click(function(){
+		socket.emit('top_thread');
+		
+	});
+	
+	$('#top_ka').click(function(){
+		socket.emit('top_karma');
+		
+	});
+	//SELECT * FROM threads ORDER BY upvotes DESC LIMIT 3;
 	
 });

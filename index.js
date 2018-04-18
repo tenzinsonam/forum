@@ -249,6 +249,21 @@ io.on('connection', function(socket){
             socket.emit('error_state');
         }
     });
+
+    socket.on('top_thread', function(){
+        con.query('SELECT * FROM threads ORDER BY upvotes DESC LIMIT 3;',function(err, result, fields){
+            if(err) throw err;
+            
+            socket.emit('top_thr',result);
+        });
+    });
+
+    socket.on('top_karma', function(){
+        con.query('SELECT * FROM persAttr ORDER BY karma DESC LIMIT 3;', function(err, result, fields){
+            if(err) throw err;
+            socket.emit('top_kar', result);
+        });
+    });
 });
 
 
