@@ -67,26 +67,36 @@ io.on('connection', function(socket){
         //io.emit('send msg', msg);
     });
 
-    socket.on('create_thread',function(msg){
+    socket.on('create_thread',function(msg, username){
         //console.log('thread: '+msg);
-        var insert_thr = "INSERT INTO threads (name, timestamp) VALUES ('" +msg +"',NOW())";
-        //console.log(insert_thr);
-        con.query(insert_thr, function(err, result){
-            if(err) throw err;
-            con.query("SELECT * FROM threads WHERE name = '"+msg+"'",function(err, result, fields){
-                //console.log(result[0].id);
+        let logged = usersActive.has(username);
+        if(logged == true){
+            let sql_query5 = "UPDATE logincred SET karma = karma + 7 WHERE username = '"+username+"';";
+            con.query(sql_query5, function (err5, res5) {
+                if (err5) throw err5;
+            });
+            var insert_thr = "INSERT INTO threads (name, timestamp) VALUES ('" +msg +"',NOW())";
+            //console.log(insert_thr);
+            con.query(insert_thr, function(err, result){
                 if(err) throw err;
-                io.emit('create_thread', result);
-                con.query("CREATE TABLE "+result[0].id.toString()+"_mid (id INT AUTO_INCREMENT PRIMARY KEY, msg VARCHAR(255))",function(err, result){
-                    console.log('created mid');
+                con.query("SELECT * FROM threads WHERE name = '"+msg+"'",function(err, result, fields){
+                    //console.log(result[0].id);
                     if(err) throw err;
-                });
-                con.query("CREATE TABLE "+result[0].id.toString()+"_uid (uid INT PRIMARY KEY)", function(err, result){
-                    console.log('created uid');
-                    if(err) throw err;
+                    io.emit('create_thread', result);
+                    con.query("CREATE TABLE "+result[0].id.toString()+"_mid (id INT AUTO_INCREMENT PRIMARY KEY, msg VARCHAR(255))",function(err, result){
+                        //console.log('created mid');
+                        if(err) throw err;
+                    });
+                    con.query("CREATE TABLE "+result[0].id.toString()+"_uid (uid INT PRIMARY KEY)", function(err, result){
+                        //console.log('created uid');
+                        if(err) throw err;
+                    });
                 });
             });
-        });
+        }
+        else {
+            io.emit('accessDenied', '/');
+        }
     });
 
     socket.on('login_credentials', function(username, pass){
@@ -153,6 +163,11 @@ io.on('connection', function(socket){
                         let sql_query4 = "UPDATE threads SET upvotes = upvotes + 1 WHERE id = "+thrId;
                         con.query(sql_query4, function (err4, res4) {
                             if (err4) throw err4;
+                            let sql_query5 = "UPDATE logincred SET karma = karma + 2 WHERE id = "+userid;
+                            con.query(sql_query5, function (err5, res5) {
+                                if (err5) throw err5;
+
+                            });
                         });
                         //console.log(res4);
                     });
