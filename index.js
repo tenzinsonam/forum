@@ -114,15 +114,14 @@ io.on('connection', function(socket){
         });
     });
 
-    socket.on('register_credentials', function(username, pass){
+    socket.on('register_credentials', function(username, pass, gender, age){
         // TODO :: Check whether the username is distinct
         let sql_query = "INSERT INTO logincred (username, pass) VALUES ('" +
                           username+"','" + pass + "')";
         con.query(sql_query, function (err, result) {
             if (err) throw err;
             //console.log("New member added: " + username);
-            let sql_query2 = "INSERT INTO persAttr (username) VALUES ('" +
-                              username+"');";
+            let sql_query2 = "INSERT INTO persAttr (username, gender, age) VALUES ('" + username+"','" + gender+"'," + age+");";
             con.query(sql_query2, function (err2, result2) {
                 if (err) throw err;
                 //console.log("New member added: " + username);
@@ -134,7 +133,7 @@ io.on('connection', function(socket){
     });
 
     socket.on('log out', function(username){
-      console.log("cameeeeeeeeeeeee")
+      //console.log("cameeeeeeeeeeeee")
       console.log(usersActive);
       usersActive.delete(username);
       console.log(usersActive);
