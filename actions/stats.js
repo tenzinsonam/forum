@@ -92,6 +92,18 @@ $(function(){
 		
 	});
 	
+	socket.on('ba_user', function(list){
+		var myWindow = window.open("", "StatWindow", "width=400,height=800");
+        var str = '';
+        //console.log(list)
+        for (var i in list){
+        	str = str + list[i].username + "<br>";
+        	
+        }
+        myWindow.document.write("<p>"+str+"</p>");
+		
+	});
+	
 	$('#stat_thread').submit(function(){
 		socket.emit('stat_thread',$('#thr_start').val(),$('#thr_stop').val());
 		//:Wconsole.log($('#thread_name').val());
@@ -121,6 +133,10 @@ $(function(){
 		socket.emit('usr_thr', $('#usr').val());
 		return false;		
 	});
-	//SELECT * FROM threads ORDER BY upvotes DESC LIMIT 3;
+	
+	$('#bad_usr').click(function(){
+		socket.emit('bad_usr');
+		
+	});
 	
 });

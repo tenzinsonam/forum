@@ -310,6 +310,16 @@ io.on('connection', function(socket){
             
         });
     });
+    
+    socket.on('bad_usr', function(){
+        //console.log('here?');
+        con.query('SELECT P.username FROM persAttr P, logincred C WHERE P.karma < 40 AND LENGTH(C.pass) < 5 AND P.username = C.username;', function(err, result, fields){
+            if(err) throw err;
+            //console.log(result);
+            socket.emit('ba_user', result);
+        });
+    });
+    
 });
 
 
