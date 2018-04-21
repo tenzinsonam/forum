@@ -10,7 +10,7 @@ con.connect(function(err){
     if(err) throw err;
 });
 
-
+//username is foreign key for logincred and refrences persAttrTABLE 
 con.query('CREATE TABLE logincred(id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(15), pass VARCHAR(255));', function(err, result){
     if(err) throw err;
 });

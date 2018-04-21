@@ -130,11 +130,11 @@ io.on('connection', function(socket){
             if(flag==0){
                 var sql_query = "INSERT INTO logincred (username, pass) VALUES ('" +
                                   username+"','" + pass + "')";
-                con.query(sql_query, function (err, result) {
+                var sql_query2 = "INSERT INTO persAttr (username, gender, age) VALUES ('" + username+"','" + gender+"'," + age+");";
+                con.query(sql_query2, function (err, result) {
                     if (err) throw err;
                     //console.log("New member added: " + username);
-                    var sql_query2 = "INSERT INTO persAttr (username, gender, age) VALUES ('" + username+"','" + gender+"'," + age+");";
-                    con.query(sql_query2, function (err2, result2) {
+                    con.query(sql_query, function (err2, result2) {
                         if (err2) throw err2;
                         //console.log("New member added: " + username);
                         io.emit('accessAllowed', '/home');
@@ -317,6 +317,14 @@ io.on('connection', function(socket){
             if(err) throw err;
             //console.log(result);
             socket.emit('ba_user', result);
+        });
+    });
+
+    socket.on('dele_user', function(username){
+        console.log(username);
+        con.query('DELETE FROM persAttr WHERE username="'+username+'";',function(err, result){
+            if(err) throw err;
+            socket.emit('user_deleted', username);
         });
     });
     

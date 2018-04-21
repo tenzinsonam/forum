@@ -104,6 +104,11 @@ $(function(){
 		
 	});
 	
+	socket.on('user_deleted',function(user){
+		alert(user+' deleted');
+		
+	});
+	
 	$('#stat_thread').submit(function(){
 		socket.emit('stat_thread',$('#thr_start').val(),$('#thr_stop').val());
 		//:Wconsole.log($('#thread_name').val());
@@ -136,6 +141,12 @@ $(function(){
 	
 	$('#bad_usr').click(function(){
 		socket.emit('bad_usr');
+		
+	});
+	
+	$('#del_user').submit(function(){
+		socket.emit('dele_user', $('#user_del').val());
+		return false;
 		
 	});
 	
