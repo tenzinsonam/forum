@@ -12,7 +12,7 @@ $(function(){
         var str = '';
         //console.log('here');
         for (var i in list){
-        	str = str + list[i].name + "<br>";
+        	str = str +list[i].id+':' +list[i].name + "<br>";
         }
         myWindow.document.write("<p>"+str+"</p>");
 		
@@ -53,7 +53,7 @@ $(function(){
         var str = '';
         //console.log(list)
         for (var i in list){
-        	str = str + list[i].name + "<br>";
+        	str = str +list[i].id+':'+ list[i].name + "<br>";
         	
         }
         myWindow.document.write("<p>"+str+"</p>");
